@@ -9,11 +9,11 @@ def home():
     # Explicit link list definitions to feed the front-end elements directly
     social_links = [
         {"name": "WhatsApp", "url": "https://tr.ee/pJ4J3yGbgv", "icon": "💬", "color": "#25D366"},
-        {"name": "Instagram", "url": "https://tr.ee/WlihOabF86", "icon": "📸", "color": "#E1306C"},
-        {"name": "TikTok", "url": "https://tr.ee/FEzx96lXpc", "icon": "🎵", "color": "#00f2fe"},
-        {"name": "YouTube", "url": "https://tr.ee/aeYCutRTr3", "icon": "📺", "color": "#FF0000"},
+        {"name": "Instagram", "url": "https://www.instagram.com/b_render1?igsh=Nmk3MTczYzM1aXFi", "icon": "📸", "color": "#E1306C"},
+        {"name": "TikTok", "url": "https://www.tiktok.com/@b.render5?_r=1&_t=ZS-97hXyN9foQM", "icon": "🎵", "color": "#00f2fe"},
+        {"name": "YouTube", "url": "https://youtube.com/@1b_render?si=MlIqLXb7qqnMnhiV", "icon": "📺", "color": "#FF0000"},
         {"name": "X (Twitter)", "url": "https://tr.ee/7NAcWxIEBZ", "icon": "🐦", "color": "#1DA1F2"},
-        {"name": "Facebook", "url": "https://tr.ee/N-TVoA_APA", "icon": "👥", "color": "#1877F2"},
+        {"name": "Facebook", "url": "https://www.facebook.com/share/1JAkCYqSNt/", "icon": "👥", "color": "#1877F2"},
         {"name": "Threads", "url": "https://tr.ee/2lU4tCptEO", "icon": "🧵", "color": "#ffffff"}
     ]
     return render_template('index.html', links=social_links)
