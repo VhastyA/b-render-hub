@@ -14,7 +14,8 @@ def home():
         {"name": "YouTube", "url": "https://youtube.com/@1b_render?si=MlIqLXb7qqnMnhiV", "icon": "📺", "color": "#FF0000"},
         {"name": "X (Twitter)", "url": "https://tr.ee/7NAcWxIEBZ", "icon": "🐦", "color": "#1DA1F2"},
         {"name": "Facebook", "url": "https://www.facebook.com/share/1JAkCYqSNt/", "icon": "👥", "color": "#1877F2"},
-        {"name": "Threads", "url": "https://tr.ee/2lU4tCptEO", "icon": "🧵", "color": "#ffffff"}
+         {"name": "Facebook", "url": "https://www.facebook.com/share/1BnoYYRRN9/", "icon": "👥", "color": "#1877F2"},
+        {"name": "LinkedIn", "url": "https://www.linkedin.com/in/emmanuel-gyarko-a0280a2a7?utm_source=share_via&utm_content=profile&utm_medium=member_android", "icon": "🧵", "color": "#ffffff"}
     ]
     return render_template('index.html', links=social_links)
 
