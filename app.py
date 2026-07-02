@@ -6,7 +6,7 @@ app.secret_key = 'b_render1_architectural_hub_2026'
 
 @app.route('/')
 def home():
-    # Structural dictionary array containing your exact platform links and custom icons
+    # Explicit link list definitions to feed the front-end elements directly
     social_links = [
         {"name": "WhatsApp", "url": "https://tr.ee/pJ4J3yGbgv", "icon": "💬", "color": "#25D366"},
         {"name": "Instagram", "url": "https://tr.ee/WlihOabF86", "icon": "📸", "color": "#E1306C"},
