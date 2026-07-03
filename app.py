@@ -1,23 +1,163 @@
-import os
-from flask import Flask, render_template
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>b_render1 Official Links</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@200..800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #11141a;
+            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
 
-app = Flask(__name__)
-app.secret_key = 'b_render1_architectural_hub_2026'
+        .phone-wrapper {
+            width: 100%;
+            max-width: 430px;
+            min-height: 100vh;
+            background-color: #151922;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 0 50px rgba(0,0,0,0.6);
+            overflow: hidden;
+        }
 
-@app.route('/')
-def home():
-    # Explicit link list definitions to feed the front-end elements directly
-    social_links = [
-        {"name": "WhatsApp", "url": "https://tr.ee/pJ4J3yGbgv", "color": "#25D366"},
-        {"name": "Instagram", "url": "https://www.instagram.com/b_render1?igsh=Nmk3MTczYzM1aXFi", "color": "#E1306C"},
-        {"name": "TikTok", "url": "https://www.tiktok.com/@b.render5?_r=1&_t=ZS-97hXyN9foQM",: "color": "#00f2fe"},
-        {"name": "YouTube", "url": "https://youtube.com/@1b_render?si=MlIqLXb7qqnMnhiV",: "color": "#FF0000"},
-        {"name": "X (Twitter)", "url": "https://tr.ee/7NAcWxIEBZ",: "color": "#1DA1F2"},
-        {"name": "Facebook", "url": "https://www.facebook.com/share/1JAkCYqSNt/",: "color": "#1877F2"},
-         {"name": "Facebook", "url": "https://www.facebook.com/share/1BnoYYRRN9/", :"color": "#1877F2"},
-        {"name": "LinkedIn", "url": "https://www.linkedin.com/in/emmanuel-gyarko-a0280a2a7?utm_source=share_via&utm_content=profile&utm_medium=member_android",: "color": "#ffffff"}
-    ]
-    return render_template('index.html', links=social_links)
+        /* 🌆 Top banner section using your uploaded architectural render PNG */
+        .top-banner {
+            width: 100%;
+            height: 240px;
+            background-image: url('/static/images/banner.png');
+            background-size: cover;
+            background-position: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
 
-if __name__ == '__main__':
-    app.run(debug=True)
+        /* Premium ambient dark gradient overlay over the background graphic */
+        .top-banner::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(21,25,34,1));
+        }
+
+        .content-body {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            padding: 160px 30px 50px 30px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        /* 🎯 Overlapping central circle housing your brand logo asset */
+        .avatar-container {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background-color: #000000;
+            margin: 0 auto 20px auto;
+            border: 4px solid #151922;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            margin: 0 0 6px 0;
+            color: #e2e8f0;
+        }
+
+        .subtitle {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #94a3b8;
+            margin: 0 0 40px 0; /* Adjusted space since icon row is removed */
+            font-weight: 500;
+        }
+
+        .links-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            width: 100%;
+        }
+
+        .pill-btn {
+            display: block;
+            background-color: #dbe1e8;
+            color: #151922;
+            border: none;
+            border-radius: 50px;
+            padding: 18px 24px;
+            font-size: 13px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-decoration: none;
+            transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .pill-btn:hover {
+            background-color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="phone-wrapper">
+        <div class="top-banner"></div>
+
+        <div class="content-body">
+            <div class="avatar-container">
+                <img src="/static/images/logo.jpg" alt="B Render Logo" class="avatar-img">
+            </div>
+
+            <h1>b_render1</h1>
+            <div class="subtitle">Architectural Visualizer & Creator</div>
+
+            <div class="links-stack">
+                {% for item in links %}
+                    <a href="{{ item.url }}" target="_blank" class="pill-btn">
+                        {{ item.name }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
