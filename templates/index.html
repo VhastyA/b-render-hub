@@ -20,6 +20,38 @@
             align-items: flex-start;
             min-height: 100vh;
         }
+        /* ☀️ HIGH-VISIBILITY BUTTONS WITH GOLD BOTTOM ACCENT ☀️ */
+        .pill-btn {
+            display: block;
+            background-color: #212631;
+            color: #ffffff;
+            /* Standard border */
+            border: 1.5px solid rgba(219, 225, 232, 0.25);
+            /* Gold bottom line */
+            border-bottom: 3px solid #d4af37; 
+            border-radius: 14px;
+            padding: 18px 24px;
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        /* Hover & Tap State */
+        .pill-btn:hover {
+            background-color: #2a303e; /* Slightly lighter on hover */
+            color: #ffffff;
+            border-color: rgba(212, 175, 55, 0.5); /* Faint gold border glow */
+            border-bottom: 3px solid #ffd700; /* Brighter gold on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.2); /* Soft gold shadow */
+        }
+        
+        .pill-btn:active {
+            transform: translateY(0);
+        }
 
         .phone-wrapper {
             width: 100%;
