@@ -141,14 +141,14 @@
             pointer-events: auto;
         }
 
-        /* ☀️ HIGH-VISIBILITY BUTTONS WITH Muted LIGHT GOLD OUTLINE ☀️ */
+        /* ☀️ HIGH-VISIBILITY BUTTONS WITH DIMMED GOLD OUTLINE ☀️ */
         .pill-btn {
             display: block;
             background-color: #1e232e; 
             color: #ffffff;
             
-            /* ✨ Beautiful, light champagne gold border outline */
-            border: 1.5px solid #f4ebd0; 
+            /* ✨ Soft, deeply dimmed gold-gray outline border */
+            border: 1.5px solid #7c715c; 
             
             border-radius: 14px;
             padding: 18px 24px;
@@ -165,12 +165,12 @@
             background-color: #2a303e; 
             color: #ffffff;
             
-            /* ✨ Shines to pristine white on hover */
-            border-color: #ffffff; 
+            /* ✨ Soft warm champagne glow on hover (not blinding) */
+            border-color: #bfa87a; 
             
             transform: translateY(-2px);
-            /* Ultra-clean ambient light bloom reflection */
-            box-shadow: 0 10px 30px rgba(244, 235, 208, 0.15); 
+            /* Very quiet, subtle ambient shadow backdrop */
+            box-shadow: 0 10px 25px rgba(191, 168, 122, 0.12); 
         }
         
         .pill-btn:active {
@@ -270,33 +270,4 @@
     </div>
 
     <div id="imageViewer" class="image-viewer-modal" onclick="closeViewerOnOverlay(event)">
-        <img src="/static/images/banner.jpg" alt="Architectural Render Full View" class="modal-render-view">
-        
-        <div class="modal-controls">
-            <button class="modal-btn close-btn" onclick="closeViewer()">Close</button>
-            <a href="/static/images/banner.jpg" download="b_render1_render.jpg" class="modal-btn">Download HD</a>
-        </div>
-    </div>
-
-    <script>
-        const modal = document.getElementById('imageViewer');
-
-        function openViewer() {
-            modal.classList.add('modal-active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeViewer() {
-            modal.classList.remove('modal-active');
-            document.body.style.overflow = '';
-        }
-
-        function closeViewerOnOverlay(event) {
-            if (event.target === modal) {
-                closeViewer();
-            }
-        }
-    </script>
-
-</body>
-</html>
+        <img src="/static/
