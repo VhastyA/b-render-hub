@@ -14,7 +14,7 @@ def home():
         {"name": "LinkedIn", "url": "https://www.linkedin.com/in/emmanuel-gyarko-a0280a2a7?utm_source=share_via&utm_content=profile&utm_medium=member_android"},
         {"name": "Facebook Page", "url": "https://www.facebook.com/share/1BnoYYRRN9/"},
         {"name": "Facebook Profile", "url": "https://www.facebook.com/share/1JAkCYqSNt/"}
-        {"name": "WhatsApp", "url": "https://whatsapp.com/dl/"}
+    
     ]
     return render_template('index.html', links=social_links)
 
