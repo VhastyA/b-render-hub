@@ -20,6 +20,41 @@
             align-items: flex-start;
             min-height: 100vh;
         }
+        /* ☀️ HIGH-VISIBILITY BUTTONS WITH FULL GOLD OUTLINE ☀️ */
+        .pill-btn {
+            display: block;
+            background-color: #1e232e; /* Deep rich dark background */
+            color: #ffffff;
+            
+            /* ✨ Full gold outline border around the entire box */
+            border: 1.5px solid #d4af37; 
+            
+            border-radius: 14px;
+            padding: 18px 24px;
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Hover & Tap State */
+        .pill-btn:hover {
+            background-color: #2a303e; /* Lighter background on hover */
+            color: #ffffff;
+            
+            /* Brightens up the gold outline when hovered */
+            border-color: #ffd700; 
+            
+            transform: translateY(-2px);
+            /* Gives a beautiful soft gold ambient glow behind the button */
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.25); 
+        }
+        
+        .pill-btn:active {
+            transform: translateY(0);
+        }
 
 
         .links-stack {
