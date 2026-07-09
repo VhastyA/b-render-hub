@@ -34,15 +34,16 @@
             overflow: hidden;
         }
 
-        /* 🌆 Shifted background position to reveal more of the bottom scene */
+        /* 🌆 The clickable banner frame */
         .banner-container {
             width: 100%;
-            height: 310px; /* Expanded slightly to give the scene more breathing room */
+            height: 340px; /* Slightly heightened to accommodate the beautiful curve mask */
             position: absolute;
             top: 0;
             left: 0;
             z-index: 1;
             cursor: pointer;
+            overflow: hidden;
         }
 
         .top-banner {
@@ -50,7 +51,7 @@
             height: 100%;
             background-image: url('/static/images/banner.jpg');
             background-size: cover;
-            background-position: center 20%; /* 🎯 Shifts image to show the lower section/lady */
+            background-position: center 15%; /* Keeps the lady and car framed cleanly */
             transition: opacity 0.2s ease;
         }
 
@@ -58,9 +59,24 @@
             opacity: 0.9;
         }
 
+        /* 🌊 The Custom Modern Curve Mask Shape */
+        .curve-divider {
+            position: absolute;
+            bottom: -2px; /* Pulls it down slightly to eliminate any pixel gaps */
+            left: 0;
+            width: 100%;
+            height: 60px;
+            pointer-events: none;
+        }
+
+        .curve-divider svg {
+            width: 100%;
+            height: 100%;
+        }
+
         .banner-hint {
             position: absolute;
-            bottom: 12px;
+            bottom: 65px; /* Bumped up so it stays clear of the curved mask */
             right: 12px;
             background: rgba(17, 20, 26, 0.75);
             padding: 4px 10px;
@@ -73,29 +89,29 @@
             pointer-events: none;
         }
 
-        /* 🎯 Layout alignment adjusted to match new banner dimensions */
+        /* 🎯 Adjusted text & links container spacing */
         .content-body {
             position: relative;
             z-index: 2;
             width: 100%;
-            padding: 240px 28px 60px 28px; /* Pushed content box down to line up with the 310px header */
+            padding: 270px 28px 60px 28px; /* Perfectly aligns content flow underneath the curve path */
             box-sizing: border-box;
             text-align: center;
             pointer-events: none;
         }
 
         .avatar-container {
-            width: 120px;
-            height: 120px;
+            width: 115px;
+            height: 115px;
             border-radius: 50%;
             background-color: #000000;
-            margin: 0 auto 24px auto;
+            margin: 0 auto 20px auto;
             border: 3px solid #151922;
             overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.5);
             pointer-events: auto;
         }
 
@@ -122,7 +138,7 @@
             text-transform: uppercase;
             letter-spacing: 3px;
             color: #94a3b8;
-            margin: 0 0 45px 0;
+            margin: 0 0 40px 0;
             font-weight: 500;
             opacity: 0.8;
         }
@@ -159,7 +175,7 @@
             box-shadow: 0 12px 30px rgba(219,225,232,0.25);
         }
 
-        /* 🖼️ Lightbox Modal */
+        /* 🖼️ Fullscreen Lightbox Frame */
         .image-viewer-modal {
             display: none;
             position: fixed;
@@ -231,7 +247,14 @@
     <div class="phone-wrapper">
         <div class="banner-container" onclick="openViewer()">
             <div class="top-banner"></div>
-            <span class="banner-hint"></span>
+            
+            <div class="curve-divider">
+                <svg viewBox="0 0 1440 320" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#151922" d="M0,224 C288,288 1152,288 1440,224 L1440,320 L0,320 Z"></path>
+                </svg>
+            </div>
+            
+            <span class="banner-hint">View Render</span>
         </div>
 
         <div class="content-body">
@@ -239,8 +262,8 @@
                 <img src="/static/images/logo.jpg" alt="B Render Logo" class="avatar-img">
             </div>
 
-            <h1>B RENDER</h1>
-            <div class="subtitle">Architectural Designer & Creator</div>
+            <h1>b_render1</h1>
+            <div class="subtitle">Architectural Visualizer & Creator</div>
 
             <div class="links-stack">
                 {% for item in links %}
@@ -255,31 +278,4 @@
     <div id="imageViewer" class="image-viewer-modal" onclick="closeViewerOnOverlay(event)">
         <img src="/static/images/banner.jpg" alt="Architectural Render Full View" class="modal-render-view">
         
-        <div class="modal-controls">
-            <button class="modal-btn close-btn" onclick="closeViewer()">Close</button>
-            <a href="/static/images/banner.jpg" download="b_render1_render.jpg" class="modal-btn">Download HD</a>
-        </div>
-    </div>
-
-    <script>
-        const modal = document.getElementById('imageViewer');
-
-        function openViewer() {
-            modal.classList.add('modal-active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeViewer() {
-            modal.classList.remove('modal-active');
-            document.body.style.overflow = '';
-        }
-
-        function closeViewerOnOverlay(event) {
-            if (event.target === modal) {
-                closeViewer();
-            }
-        }
-    </script>
-
-</body>
-</html>
+        <div class
