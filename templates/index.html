@@ -34,14 +34,14 @@
             overflow: hidden;
         }
 
-        /* 🌆 Clean layout positioning for banner image wrapper */
+        /* 🌆 Placed cleanly behind the logo */
         .banner-container {
             width: 100%;
             height: 280px;
             position: absolute;
             top: 0;
             left: 0;
-            z-index: 5; /* Raised above everything else to ensure clicks registration */
+            z-index: 1; /* Behind the content layers */
             cursor: pointer;
         }
 
@@ -58,7 +58,6 @@
             opacity: 0.9;
         }
 
-        /* 💡 Subtle "View" label hint positioning */
         .banner-hint {
             position: absolute;
             bottom: 12px;
@@ -74,15 +73,18 @@
             pointer-events: none;
         }
 
+        /* 🎯 This container passes clicks through its empty spaces */
         .content-body {
             position: relative;
-            z-index: 2;
+            z-index: 2; /* Sits over the banner image */
             width: 100%;
             padding: 210px 28px 60px 28px;
             box-sizing: border-box;
             text-align: center;
+            pointer-events: none; /* Empty spaces ignore clicks so the banner catches them */
         }
 
+        /* 👤 Re-activates touch/click events explicitly for the profile card elements */
         .avatar-container {
             width: 120px;
             height: 120px;
@@ -95,14 +97,17 @@
             justify-content: center;
             align-items: center;
             box-shadow: 0 16px 40px rgba(0,0,0,0.6);
-            position: relative;
-            z-index: 10; /* Ensures avatar floats over the header slice cleanly */
+            pointer-events: auto; /* Logo is safely clickable and normal */
         }
 
         .avatar-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+
+        h1, .subtitle {
+            pointer-events: auto;
         }
 
         h1 {
@@ -128,6 +133,7 @@
             flex-direction: column;
             gap: 12px;
             width: 100%;
+            pointer-events: auto; /* Buttons remain normal and active */
         }
 
         .pill-btn {
@@ -154,7 +160,7 @@
             box-shadow: 0 12px 30px rgba(219,225,232,0.25);
         }
 
-        /* 🖼️ Modern Lightbox Modal Window */
+        /* 🖼️ Fullscreen Lightbox Frame */
         .image-viewer-modal {
             display: none;
             position: fixed;
@@ -163,7 +169,7 @@
             width: 100%;
             height: 100%;
             background-color: rgba(17, 20, 26, 0.96);
-            z-index: 1000; /* Placed at the very top of all element rendering steps */
+            z-index: 1000;
             justify-content: center;
             align-items: center;
             flex-direction: column;
