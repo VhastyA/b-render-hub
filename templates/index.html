@@ -34,38 +34,44 @@
             overflow: hidden;
         }
 
-        /* 🌆 Interactive click-to-view banner header */
-        .top-banner {
+        /* 🌆 Clean layout positioning for banner image wrapper */
+        .banner-container {
             width: 100%;
             height: 280px;
-            background-image: url('/static/images/banner.jpg');
-            background-size: cover;
-            background-position: center;
             position: absolute;
             top: 0;
             left: 0;
-            z-index: 1;
+            z-index: 5; /* Raised above everything else to ensure clicks registration */
             cursor: pointer;
+        }
+
+        .top-banner {
+            width: 100%;
+            height: 100%;
+            background-image: url('/static/images/banner.jpg');
+            background-size: cover;
+            background-position: center;
             transition: opacity 0.2s ease;
         }
 
-        .top-banner:hover {
+        .banner-container:hover .top-banner {
             opacity: 0.9;
         }
 
-        /* Subtle "View/Download" tip hint overlay on desktop hover */
+        /* 💡 Subtle "View" label hint positioning */
         .banner-hint {
             position: absolute;
             bottom: 12px;
             right: 12px;
-            background: rgba(17, 20, 26, 0.7);
+            background: rgba(17, 20, 26, 0.75);
             padding: 4px 10px;
             border-radius: 20px;
             font-size: 9px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            pointer-events: none;
             border: 1px solid rgba(219, 225, 232, 0.1);
+            color: #ffffff;
+            pointer-events: none;
         }
 
         .content-body {
@@ -89,6 +95,8 @@
             justify-content: center;
             align-items: center;
             box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+            position: relative;
+            z-index: 10; /* Ensures avatar floats over the header slice cleanly */
         }
 
         .avatar-img {
@@ -146,7 +154,7 @@
             box-shadow: 0 12px 30px rgba(219,225,232,0.25);
         }
 
-        /* 🖼️ Modern Sleek Lightbox Modal Frame Setup */
+        /* 🖼️ Modern Lightbox Modal Window */
         .image-viewer-modal {
             display: none;
             position: fixed;
@@ -154,14 +162,14 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(17, 20, 26, 0.95);
-            z-index: 100;
+            background-color: rgba(17, 20, 26, 0.96);
+            z-index: 1000; /* Placed at the very top of all element rendering steps */
             justify-content: center;
             align-items: center;
             flex-direction: column;
             padding: 20px;
             box-sizing: border-box;
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(20px);
         }
 
         .modal-active {
@@ -170,9 +178,9 @@
 
         .modal-render-view {
             max-width: 100%;
-            max-height: 75vh;
+            max-height: 72vh;
             border-radius: 12px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+            box-shadow: 0 30px 70px rgba(0,0,0,0.8);
             object-fit: contain;
         }
 
@@ -216,7 +224,8 @@
 <body>
 
     <div class="phone-wrapper">
-        <div class="top-banner" onclick="openViewer()">
+        <div class="banner-container" onclick="openViewer()">
+            <div class="top-banner"></div>
             <span class="banner-hint">View Render</span>
         </div>
 
@@ -243,7 +252,7 @@
         
         <div class="modal-controls">
             <button class="modal-btn close-btn" onclick="closeViewer()">Close</button>
-            <a href="/static/images/banner.jpg" download="b_render1_architectural_render.jpg" class="modal-btn">Download HD</a>
+            <a href="/static/images/banner.jpg" download="b_render1_render.jpg" class="modal-btn">Download HD</a>
         </div>
     </div>
 
@@ -252,16 +261,15 @@
 
         function openViewer() {
             modal.classList.add('modal-active');
-            document.body.style.overflow = 'hidden'; // Lock scrolling
+            document.body.style.overflow = 'hidden';
         }
 
         function closeViewer() {
             modal.classList.remove('modal-active');
-            document.body.style.overflow = ''; // Restore scrolling
+            document.body.style.overflow = '';
         }
 
         function closeViewerOnOverlay(event) {
-            // Close only if background container itself is clicked
             if (event.target === modal) {
                 closeViewer();
             }
