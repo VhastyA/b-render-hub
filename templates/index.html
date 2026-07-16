@@ -42,27 +42,20 @@
             left: 0;
             z-index: 1;
             cursor: pointer;
-            background-color: #1a1f2c; /* Fallback if images fail */
         }
 
         .top-banner {
             width: 100%;
             height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
+            background-image: url('/static/images/banner.jpg');
             background-size: cover;
             background-position: center 15%;
-            opacity: 0;
-            transition: opacity 1.2s ease-in-out;
+            /* Increased transition slightly to make the slide fade-out/fade-in feel premium */
+            transition: opacity 0.6s ease-in-out; 
         }
 
-        .top-banner.active {
-            opacity: 1;
-        }
-
-        .banner-container:hover .top-banner.active {
-            opacity: 0.85;
+        .banner-container:hover .top-banner {
+            opacity: 0.9;
         }
 
         .banner-hint {
@@ -78,7 +71,6 @@
             border: 1px solid rgba(219, 225, 232, 0.1);
             color: #ffffff;
             pointer-events: none;
-            z-index: 10;
         }
 
         .content-body {
@@ -90,6 +82,7 @@
             padding: 80px 24px 45px 24px;
             box-sizing: border-box;
             text-align: center;
+            pointer-events: none;
             border-radius: 30px; 
             border: 1px solid rgba(219, 225, 232, 0.05);
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
@@ -99,7 +92,7 @@
             width: 115px;
             height: 115px;
             border-radius: 50%;
-            background-color: #1e232e;
+            background-color: #000000;
             position: absolute;
             top: -57.5px;
             left: calc(50% - 57.5px);
@@ -109,6 +102,7 @@
             justify-content: center;
             align-items: center;
             box-shadow: 0 12px 35px rgba(0,0,0,0.5);
+            pointer-events: auto;
             z-index: 5;
         }
 
@@ -116,6 +110,10 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+
+        h1, .subtitle {
+            pointer-events: auto;
         }
 
         h1 {
@@ -141,13 +139,18 @@
             flex-direction: column;
             gap: 12px;
             width: 100%;
+            pointer-events: auto;
         }
 
+        /* ☀️ HIGH-VISIBILITY BUTTONS WITH DIMMED GOLD OUTLINE ☀️ */
         .pill-btn {
             display: block;
             background-color: #1e232e; 
             color: #ffffff;
+            
+            /* ✨ Soft, deeply dimmed gold-gray outline border */
             border: 1.5px solid #7c715c; 
+            
             border-radius: 14px;
             padding: 18px 24px;
             font-size: 12px;
@@ -158,11 +161,16 @@
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
+        /* Hover & Tap State */
         .pill-btn:hover {
             background-color: #2a303e; 
             color: #ffffff;
+            
+            /* ✨ Soft warm champagne glow on hover (not blinding) */
             border-color: #bfa87a; 
+            
             transform: translateY(-2px);
+            /* Very quiet, subtle ambient shadow backdrop */
             box-shadow: 0 10px 25px rgba(191, 168, 122, 0.12); 
         }
         
@@ -170,6 +178,7 @@
             transform: translateY(0);
         }
 
+        /* Lightbox Modal */
         .image-viewer-modal {
             display: none;
             position: fixed;
@@ -230,68 +239,90 @@
             color: #ffffff;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
+        
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
     </style>
 </head>
 <body>
 
     <div class="phone-wrapper">
-        <div class="banner-container" id="bannerContainer" onclick="openViewer()">
+        <div class="banner-container" onclick="openViewer()">
             <div class="banner-hint">View Render</div>
-            
-            <div class="top-banner active" style="background-image: url('https://picsum.photos/id/10/800/600');"></div>
-            <div class="top-banner" style="background-image: url('https://picsum.photos/id/12/800/600');"></div>
-            <div class="top-banner" style="background-image: url('https://picsum.photos/id/15/800/600');"></div>
+            <div class="top-banner" id="slideshowBanner"></div>
         </div>
 
         <div class="content-body">
             <div class="avatar-container">
-                <img src="https://picsum.photos/id/64/200/200" alt="B Render Logo" class="avatar-img">
+                <img src="/static/images/logo.jpg" alt="B Render Logo" class="avatar-img">
             </div>
 
             <h1>B-render</h1>
             <div class="subtitle">Architectural Visualization Studio</div>
 
             <div class="links-stack">
-                <a href="#" class="pill-btn">Instagram Portfolio</a>
-                <a href="#" class="pill-btn">Contact Us</a>
-                <a href="#" class="pill-btn">Behance</a>
+                {% for item in links %}
+                    <a href="{{ item.url }}" target="_blank" class="pill-btn">
+                        {{ item.name }}
+                    </a>
+                {% endfor %}
             </div>
         </div>
     </div>
 
     <div id="imageViewer" class="image-viewer-modal" onclick="closeViewerOnOverlay(event)">
-        <img src="" alt="Render Preview" class="modal-render-view">
+        <img src="" alt="Render Preview" class="modal-render-view" id="modalImg">
         <div class="modal-controls">
             <button class="modal-btn close-btn" onclick="closeViewer()">Close</button>
         </div>
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const slides = document.querySelectorAll('.top-banner');
-            let currentSlideIndex = 0;
-            const slideInterval = 5000;
+        // --- SLIDESHOW CONFIGURATION ---
+        // Add your render image paths here
+        const images = [
+            '/static/images/banner.jpg',
+            '/static/images/banner2.jpg',
+            '/static/images/banner3.jpg'
+        ];
+        
+        let currentIndex = 0;
+        const changeInterval = 5000; // Change image every 5 seconds
+        const banner = document.getElementById('slideshowBanner');
 
-            function nextSlide() {
-                slides[currentSlideIndex].classList.remove('active');
-                currentSlideIndex = (currentSlideIndex + 1) % slides.length;
-                slides[currentSlideIndex].classList.add('active');
-            }
+        // Set initial background image
+        if (banner) {
+            banner.style.backgroundImage = `url('${images[currentIndex]}')`;
+        }
 
-            if (slides.length > 1) {
-                setInterval(nextSlide, slideInterval);
-            }
-        });
+        function startSlideshow() {
+            setInterval(() => {
+                // 1. Fade out the banner cleanly
+                banner.style.opacity = 0;
 
+                // 2. Wait for the transition to finish (600ms), then swap image path and fade back in
+                setTimeout(() => {
+                    currentIndex = (currentIndex + 1) % images.length;
+                    banner.style.backgroundImage = `url('${images[currentIndex]}')`;
+                    banner.style.opacity = 1;
+                }, 600); 
+
+            }, changeInterval);
+        }
+
+        if (images.length > 1) {
+            startSlideshow();
+        }
+
+        // --- LIGHTBOX CONTROLS ---
         function openViewer() {
-            const activeSlide = document.querySelector('.top-banner.active');
-            if (activeSlide) {
-                const bgUrl = activeSlide.style.backgroundImage.slice(4, -1).replace(/"/g, "");
-                const modal = document.getElementById('imageViewer');
-                const modalImg = modal.querySelector('.modal-render-view');
-                modalImg.src = bgUrl;
-                modal.classList.add('modal-active');
-            }
+            const modal = document.getElementById('imageViewer');
+            const modalImg = document.getElementById('modalImg');
+            
+            // Grabs whichever image is currently active in the slideshow cycle
+            modalImg.src = images[currentIndex];
+            modal.classList.add('modal-active');
         }
 
         function closeViewer() {
