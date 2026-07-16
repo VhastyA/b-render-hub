@@ -44,17 +44,26 @@
             cursor: pointer;
         }
 
+        /* Adjusted to support multiple layered banners */
         .top-banner {
             width: 100%;
             height: 100%;
-            background-image: url('/static/images/banner.jpg');
+            position: absolute;
+            top: 0;
+            left: 0;
             background-size: cover;
             background-position: center 15%;
-            transition: opacity 0.2s ease;
+            opacity: 0; /* Hidden by default */
+            transition: opacity 1.2s ease-in-out; /* Smooth crossfade timing */
         }
 
-        .banner-container:hover .top-banner {
-            opacity: 0.9;
+        /* Show the active slide */
+        .top-banner.active {
+            opacity: 1;
+        }
+
+        .banner-container:hover .top-banner.active {
+            opacity: 0.85;
         }
 
         .banner-hint {
@@ -70,6 +79,7 @@
             border: 1px solid rgba(219, 225, 232, 0.1);
             color: #ffffff;
             pointer-events: none;
+            z-index: 10;
         }
 
         .content-body {
@@ -190,84 +200,4 @@
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            padding: 20px;
-            box-sizing: border-box;
-            backdrop-filter: blur(20px);
-        }
-
-        .modal-active {
-            display: flex;
-        }
-
-        .modal-render-view {
-            max-width: 100%;
-            max-height: 72vh;
-            border-radius: 12px;
-            box-shadow: 0 30px 70px rgba(0,0,0,0.8);
-            object-fit: contain;
-        }
-
-        .modal-controls {
-            display: flex;
-            gap: 16px;
-            margin-top: 24px;
-        }
-
-        .modal-btn {
-            background-color: #dbe1e8;
-            color: #151922;
-            padding: 14px 28px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            border: none;
-            cursor: pointer;
-            transition: transform 0.2s, background-color 0.2s;
-        }
-
-        .modal-btn:hover {
-            background-color: #ffffff;
-            transform: translateY(-2px);
-        }
-
-        .close-btn {
-            background: rgba(255, 255, 255, 0.08);
-            color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .close-btn:hover {
-            background: rgba(255, 255, 255, 0.15);
-        }
-    </style>
-</head>
-<body>
-
-    <div class="phone-wrapper">
-        <div class="banner-container" onclick="openViewer()">
-            <div class="top-banner"></div>
-        </div>
-
-        <div class="content-body">
-            <div class="avatar-container">
-                <img src="/static/images/logo.jpg" alt="B Render Logo" class="avatar-img">
-            </div>
-
-            <h1>B-render</h1>
-            <div class="subtitle">Architectural Visualization Studio</div>
-
-            <div class="links-stack">
-                {% for item in links %}
-                    <a href="{{ item.url }}" target="_blank" class="pill-btn">
-                        {{ item.name }}
-                    </a>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-
-    <div id="imageViewer" class="image-viewer-modal" onclick="closeViewerOnOverlay(event)">
-        <img src="/static/
+            padding
