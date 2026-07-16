@@ -42,9 +42,9 @@
             left: 0;
             z-index: 1;
             cursor: pointer;
+            background-color: #1a1f2c; /* Fallback if images fail */
         }
 
-        /* Adjusted to support multiple layered banners */
         .top-banner {
             width: 100%;
             height: 100%;
@@ -53,11 +53,10 @@
             left: 0;
             background-size: cover;
             background-position: center 15%;
-            opacity: 0; /* Hidden by default */
-            transition: opacity 1.2s ease-in-out; /* Smooth crossfade timing */
+            opacity: 0;
+            transition: opacity 1.2s ease-in-out;
         }
 
-        /* Show the active slide */
         .top-banner.active {
             opacity: 1;
         }
@@ -91,7 +90,6 @@
             padding: 80px 24px 45px 24px;
             box-sizing: border-box;
             text-align: center;
-            pointer-events: none;
             border-radius: 30px; 
             border: 1px solid rgba(219, 225, 232, 0.05);
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
@@ -101,7 +99,7 @@
             width: 115px;
             height: 115px;
             border-radius: 50%;
-            background-color: #000000;
+            background-color: #1e232e;
             position: absolute;
             top: -57.5px;
             left: calc(50% - 57.5px);
@@ -111,7 +109,6 @@
             justify-content: center;
             align-items: center;
             box-shadow: 0 12px 35px rgba(0,0,0,0.5);
-            pointer-events: auto;
             z-index: 5;
         }
 
@@ -119,10 +116,6 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-        }
-
-        h1, .subtitle {
-            pointer-events: auto;
         }
 
         h1 {
@@ -148,18 +141,13 @@
             flex-direction: column;
             gap: 12px;
             width: 100%;
-            pointer-events: auto;
         }
 
-        /* ☀️ HIGH-VISIBILITY BUTTONS WITH DIMMED GOLD OUTLINE ☀️ */
         .pill-btn {
             display: block;
             background-color: #1e232e; 
             color: #ffffff;
-            
-            /* ✨ Soft, deeply dimmed gold-gray outline border */
             border: 1.5px solid #7c715c; 
-            
             border-radius: 14px;
             padding: 18px 24px;
             font-size: 12px;
@@ -170,16 +158,11 @@
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Hover & Tap State */
         .pill-btn:hover {
             background-color: #2a303e; 
             color: #ffffff;
-            
-            /* ✨ Soft warm champagne glow on hover (not blinding) */
             border-color: #bfa87a; 
-            
             transform: translateY(-2px);
-            /* Very quiet, subtle ambient shadow backdrop */
             box-shadow: 0 10px 25px rgba(191, 168, 122, 0.12); 
         }
         
@@ -187,7 +170,6 @@
             transform: translateY(0);
         }
 
-        /* Lightbox Modal */
         .image-viewer-modal {
             display: none;
             position: fixed;
@@ -200,4 +182,127 @@
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            padding
+            padding: 20px;
+            box-sizing: border-box;
+            backdrop-filter: blur(20px);
+        }
+
+        .modal-active {
+            display: flex;
+        }
+
+        .modal-render-view {
+            max-width: 100%;
+            max-height: 72vh;
+            border-radius: 12px;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.8);
+            object-fit: contain;
+        }
+
+        .modal-controls {
+            display: flex;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .modal-btn {
+            background-color: #dbe1e8;
+            color: #151922;
+            padding: 14px 28px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .modal-btn:hover {
+            background-color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        .close-btn {
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="phone-wrapper">
+        <div class="banner-container" id="bannerContainer" onclick="openViewer()">
+            <div class="banner-hint">View Render</div>
+            
+            <div class="top-banner active" style="background-image: url('https://picsum.photos/id/10/800/600');"></div>
+            <div class="top-banner" style="background-image: url('https://picsum.photos/id/12/800/600');"></div>
+            <div class="top-banner" style="background-image: url('https://picsum.photos/id/15/800/600');"></div>
+        </div>
+
+        <div class="content-body">
+            <div class="avatar-container">
+                <img src="https://picsum.photos/id/64/200/200" alt="B Render Logo" class="avatar-img">
+            </div>
+
+            <h1>B-render</h1>
+            <div class="subtitle">Architectural Visualization Studio</div>
+
+            <div class="links-stack">
+                <a href="#" class="pill-btn">Instagram Portfolio</a>
+                <a href="#" class="pill-btn">Contact Us</a>
+                <a href="#" class="pill-btn">Behance</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="imageViewer" class="image-viewer-modal" onclick="closeViewerOnOverlay(event)">
+        <img src="" alt="Render Preview" class="modal-render-view">
+        <div class="modal-controls">
+            <button class="modal-btn close-btn" onclick="closeViewer()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const slides = document.querySelectorAll('.top-banner');
+            let currentSlideIndex = 0;
+            const slideInterval = 5000;
+
+            function nextSlide() {
+                slides[currentSlideIndex].classList.remove('active');
+                currentSlideIndex = (currentSlideIndex + 1) % slides.length;
+                slides[currentSlideIndex].classList.add('active');
+            }
+
+            if (slides.length > 1) {
+                setInterval(nextSlide, slideInterval);
+            }
+        });
+
+        function openViewer() {
+            const activeSlide = document.querySelector('.top-banner.active');
+            if (activeSlide) {
+                const bgUrl = activeSlide.style.backgroundImage.slice(4, -1).replace(/"/g, "");
+                const modal = document.getElementById('imageViewer');
+                const modalImg = modal.querySelector('.modal-render-view');
+                modalImg.src = bgUrl;
+                modal.classList.add('modal-active');
+            }
+        }
+
+        function closeViewer() {
+            document.getElementById('imageViewer').classList.remove('modal-active');
+        }
+
+        function closeViewerOnOverlay(event) {
+            if (event.target.id === 'imageViewer' || event.target.classList.contains('close-btn')) {
+                closeViewer();
+            }
+        }
+    </script>
+</body>
+</html>
