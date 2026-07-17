@@ -46,7 +46,7 @@
             overflow: hidden;
         }
 
-        /* Two identical layers that seamlessly alternate roles */
+        /* Twin layer setup for seamless heavy rendering image swaps */
         .banner-layer {
             position: absolute;
             top: 0;
@@ -58,16 +58,16 @@
             will-change: opacity, transform;
             opacity: 0;
             z-index: 1;
-            /* Extra long, continuous zoom time for ultimate cinematic smoothness */
-            transition: opacity 2000ms ease-in-out, transform 9000ms linear;
+            /* 2-second cross-dissolve with an ultra-smooth 9-second scaling sweep */
+            transition: opacity 2000ms ease-in-out, transform 9000ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
             transform: scale(1);
         }
 
-        /* The layer currently visible to the user */
+        /* Applied exclusively to the visible rendering actively playing out */
         .banner-layer.active {
             opacity: 1;
             z-index: 2;
-            transform: scale(1.08);
+            transform: scale(1.06);
         }
 
         .banner-hint {
@@ -255,7 +255,7 @@
         <div class="banner-container" onclick="openViewer()">
             <div class="banner-hint">View Render</div>
             
-            <!-- Two active layered slots for zero-latency crossfade -->
+            <!-- Dedicated staging tracks -->
             <div class="banner-layer active" id="layer1"></div>
             <div class="banner-layer" id="layer2"></div>
         </div>
@@ -300,8 +300,19 @@
             '/static/images/Interior (7).jpg'
         ];
         
+        // --- 1. PROACTIVE IMAGE PRELOADER ENGINE ---
+        // Forcing browser to build local asset memory references immediately
+        const cachedImages = [];
+        function preloadPortfolioAssets() {
+            for (let i = 0; i < images.length; i++) {
+                cachedImages[i] = new Image();
+                cachedImages[i].src = images[i];
+            }
+        }
+        preloadPortfolioAssets();
+
         let currentIndex = 0;
-        const displayDuration = 6000; // Time before transition starts
+        const displayDuration = 5500; // Complete static window visibility length before transition trigger
         
         const layers = [
             document.getElementById('layer1'),
@@ -309,35 +320,32 @@
         ];
         let activeLayerIndex = 0;
 
-        // Setup the initial starting layout
+        // Apply first background image immediately
         if (layers[0] && layers[1] && images.length > 0) {
             layers[0].style.backgroundImage = `url('${images[currentIndex]}')`;
         }
 
         function swapSlideshowLayers() {
-            // Calculate next index configuration
             const nextIndex = (currentIndex + 1) % images.length;
             const currentLayer = layers[activeLayerIndex];
             
-            // Switch target layout pointers
+            // Toggle layer indexing paths
             activeLayerIndex = (activeLayerIndex + 1) % 2;
             const nextLayer = layers[activeLayerIndex];
 
-            // 1. Prepare upcoming image in background at baseline scale (no transitions active)
+            // A. Prepare incoming image track cleanly at baseline values
             nextLayer.style.transition = 'none';
             nextLayer.style.transform = 'scale(1)';
             nextLayer.style.backgroundImage = `url('${images[nextIndex]}')`;
             
-            // Force browser layout update so transitions don't latch onto the reset state
+            // Force hardware execution layout refresh
             nextLayer.offsetHeight;
 
-            // 2. Reactivate transition properties smoothly
-            nextLayer.style.transition = 'opacity 2000ms ease-in-out, transform 9000ms linear';
+            // B. Restore smooth transition physics instantly
+            nextLayer.style.transition = 'opacity 2000ms ease-in-out, transform 9000ms cubic-bezier(0.25, 0.46, 0.45, 0.94)';
             
-            // 3. Make the hidden layer step into active zooming territory
+            // C. Cross-dissolve: bring new up, fade old down
             nextLayer.classList.add('active');
-            
-            // 4. Remove active status from previous overlay so it dissolves away beautifully
             currentLayer.classList.remove('active');
 
             currentIndex = nextIndex;
