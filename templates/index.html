@@ -47,10 +47,9 @@
         .top-banner {
             width: 100%;
             height: 100%;
-            background-image: url('/static/images/banner.jpg');
             background-size: cover;
-            background-position: center 15%;
-            /* Increased transition slightly to make the slide fade-out/fade-in feel premium */
+            /* Center positioning works beautifully for these vertical crops */
+            background-position: center center; 
             transition: opacity 0.6s ease-in-out; 
         }
 
@@ -142,15 +141,11 @@
             pointer-events: auto;
         }
 
-        /* ☀️ HIGH-VISIBILITY BUTTONS WITH DIMMED GOLD OUTLINE ☀️ */
         .pill-btn {
             display: block;
             background-color: #1e232e; 
             color: #ffffff;
-            
-            /* ✨ Soft, deeply dimmed gold-gray outline border */
             border: 1.5px solid #7c715c; 
-            
             border-radius: 14px;
             padding: 18px 24px;
             font-size: 12px;
@@ -161,16 +156,11 @@
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Hover & Tap State */
         .pill-btn:hover {
             background-color: #2a303e; 
             color: #ffffff;
-            
-            /* ✨ Soft warm champagne glow on hover (not blinding) */
             border-color: #bfa87a; 
-            
             transform: translateY(-2px);
-            /* Very quiet, subtle ambient shadow backdrop */
             box-shadow: 0 10px 25px rgba(191, 168, 122, 0.12); 
         }
         
@@ -249,7 +239,7 @@
 
     <div class="phone-wrapper">
         <div class="banner-container" onclick="openViewer()">
-            
+            <div class="banner-hint">View Render</div>
             <div class="top-banner" id="slideshowBanner"></div>
         </div>
 
@@ -271,6 +261,7 @@
         </div>
     </div>
 
+    <!-- Lightbox Modal -->
     <div id="imageViewer" class="image-viewer-modal" onclick="closeViewerOnOverlay(event)">
         <img src="" alt="Render Preview" class="modal-render-view" id="modalImg">
         <div class="modal-controls">
@@ -279,29 +270,34 @@
     </div>
 
     <script>
-        // --- SLIDESHOW CONFIGURATION ---
-        // Add your render image paths here
+        // --- NEW RENDERS SLIDESHOW CONFIGURATION ---
         const images = [
-            '/static/images/banner.jpg',
-            '/static/images/banner2.jpg',
-            '/static/images/banner3.jpg'
+            '/static/images/1.jpg',
+            '/static/images/2.jpg',
+            '/static/images/3.jpg',
+            '/static/images/4.jpg',
+            '/static/images/5.jpg',
+            '/static/images/6.jpg',
+            '/static/images/7.jpg',
+            '/static/images/8.jpg',
+            '/static/images/9.jpg'
         ];
         
         let currentIndex = 0;
-        const changeInterval = 5000; // Change image every 5 seconds
+        const changeInterval = 5000; // Switch image every 5 seconds
         const banner = document.getElementById('slideshowBanner');
 
-        // Set initial background image
+        // Set the initial render
         if (banner) {
             banner.style.backgroundImage = `url('${images[currentIndex]}')`;
         }
 
         function startSlideshow() {
             setInterval(() => {
-                // 1. Fade out the banner cleanly
+                // Fade out smoothly
                 banner.style.opacity = 0;
 
-                // 2. Wait for the transition to finish (600ms), then swap image path and fade back in
+                // After fade animation completes, swap source and fade in
                 setTimeout(() => {
                     currentIndex = (currentIndex + 1) % images.length;
                     banner.style.backgroundImage = `url('${images[currentIndex]}')`;
@@ -320,7 +316,6 @@
             const modal = document.getElementById('imageViewer');
             const modalImg = document.getElementById('modalImg');
             
-            // Grabs whichever image is currently active in the slideshow cycle
             modalImg.src = images[currentIndex];
             modal.classList.add('modal-active');
         }
