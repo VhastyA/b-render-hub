@@ -34,7 +34,6 @@
             overflow: hidden;
         }
 
-        /* Set up the banner container to manage two sliding layers */
         .banner-container {
             width: 100%;
             height: 340px;
@@ -43,34 +42,20 @@
             left: 0;
             z-index: 1;
             cursor: pointer;
-            overflow: hidden;
         }
 
-        /* Both layers sit perfectly on top of each other */
-        .top-banner, .next-banner {
+        .top-banner {
             width: 100%;
             height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
             background-size: cover;
             background-position: center center; 
+            /* Slower 1.5s ease transition for a deeply premium fade feel */
+            transition: opacity 1.5s ease-in-out; 
+            opacity: 1;
         }
 
-        /* The top banner handles the sliding line reveal animation */
-        .top-banner {
-            z-index: 2;
-            clip-path: inset(0 0 0 0);
-            transition: clip-path 1.2s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-
-        /* The layer underneath waits to become the visible background */
-        .next-banner {
-            z-index: 1;
-        }
-
-        .banner-container:hover {
-            opacity: 0.95;
+        .banner-container:hover .top-banner {
+            opacity: 0.9;
         }
 
         .banner-hint {
@@ -86,7 +71,6 @@
             border: 1px solid rgba(219, 225, 232, 0.1);
             color: #ffffff;
             pointer-events: none;
-            z-index: 3;
         }
 
         .content-body {
@@ -256,9 +240,7 @@
 
     <div class="phone-wrapper">
         <div class="banner-container" onclick="openViewer()">
-           
-            <!-- Two image elements working together for the clean linear reveal -->
-            <div class="next-banner" id="nextBanner"></div>
+            <div class="banner-hint">View Render</div>
             <div class="top-banner" id="slideshowBanner"></div>
         </div>
 
@@ -289,53 +271,39 @@
     </div>
 
     <script>
+        // --- CHOOSE YOUR IMAGE ORDER HERE ---
+        // Rearrange these filenames so your exteriors sit at the front of the list!
         const images = [
-            '/static/images/1.jpg',
-            '/static/images/2.jpg',
-            '/static/images/3.jpg',
-            '/static/images/4.jpg',
-            '/static/images/5.jpg',
-            '/static/images/6.jpg',
-            '/static/images/7.jpg',
-            '/static/images/8.jpg',
-            '/static/images/9.jpg'
+            '/static/images/1.jpg', // Exterior 1
+            '/static/images/2.jpg', // Exterior 2
+            '/static/images/3.jpg', // Exterior 3
+            '/static/images/4.jpg', // Exterior 4
+            '/static/images/5.jpg', // Exterior 5
+            '/static/images/6.jpg', // Interior 1
+            '/static/images/7.jpg', // Interior 2
+            '/static/images/8.jpg', // Interior 3
+            '/static/images/9.jpg'  // Interior 4
         ];
         
         let currentIndex = 0;
-        const changeInterval = 8000; // Remains slow and steady (8 seconds per image)
+        const changeInterval = 8000; // Premium slow timing (8 seconds)
         const banner = document.getElementById('slideshowBanner');
-        const nextBanner = document.getElementById('nextBanner');
 
-        // Set layout initial state
-        if (banner && nextBanner) {
+        if (banner) {
             banner.style.backgroundImage = `url('${images[currentIndex]}')`;
-            const nextIndex = (currentIndex + 1) % images.length;
-            nextBanner.style.backgroundImage = `url('${images[nextIndex]}')`;
         }
 
         function startSlideshow() {
             setInterval(() => {
-                // 1. Animate a straight vertical line moving from left to right across the top image
-                banner.style.clipPath = 'inset(0 0 0 100%)';
+                // Smoothly fade out the current render
+                banner.style.opacity = 0;
 
-                // 2. Once the slide reveal ends (1.2 seconds), prepare for the next clean transition
+                // Swap images and fade back in smoothly right after opacity drops
                 setTimeout(() => {
-                    // Current background becomes what was underneath
-                    currentIndex = (currentIndex + 1) % images.length;
+                    currentIndex = (currentIndex + 1) % images.length; // Infinitely loops back to index 0
                     banner.style.backgroundImage = `url('${images[currentIndex]}')`;
-                    
-                    // Instantly snap the top-layer line boundaries back to full visibility 
-                    banner.style.transition = 'none';
-                    banner.style.clipPath = 'inset(0 0 0 0)';
-                    
-                    // Force layer rendering update before restoring line transit speeds
-                    banner.offsetHeight; 
-                    banner.style.transition = 'clip-path 1.2s cubic-bezier(0.25, 1, 0.5, 1)';
-
-                    // Dynamically load the upcoming next image behind it
-                    const nextIndex = (currentIndex + 1) % images.length;
-                    nextBanner.style.backgroundImage = `url('${images[nextIndex]}')`;
-                }, 1200);
+                    banner.style.opacity = 1;
+                }, 1500); // Perfectly calibrated to the 1.5s CSS transition
 
             }, changeInterval);
         }
