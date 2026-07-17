@@ -36,7 +36,7 @@
 
         .banner-container {
             width: 100%;
-            height: 340px;
+            height: 360px;
             position: absolute;
             top: 0;
             left: 0;
@@ -45,7 +45,7 @@
             background-color: #11141a;
         }
 
-        /* Hardware-accelerated base setup for true seamless cross-fading */
+        /* Pure cross-fading underlying layers */
         .banner-layer {
             position: absolute;
             top: 0;
@@ -69,17 +69,50 @@
             transition: opacity 1.5s ease-in-out;
         }
 
-        /* State applied dynamically during the cross-fade blend */
         #bannerFront.fade-out {
             opacity: 0;
         }
 
-        .banner-container:hover #bannerFront {
-            opacity: 0.95;
+        /* Dark overlay coating to ensure text readability exactly like ElifRent */
+        .banner-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(17, 20, 26, 0.4), rgba(17, 20, 26, 0.85));
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
         }
-        
-        .banner-container:hover #bannerFront.fade-out {
+
+        /* Dynamic Headline Layout */
+        .headline-container {
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 1.4;
+            letter-spacing: -0.5px;
+            color: #ffffff;
+            max-width: 90%;
+            margin-top: -20px;
+        }
+
+        .changing-text {
+            color: #bfa87a; /* Clean gold accent matching buttons */
+            display: inline-block;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .changing-text.text-flip {
             opacity: 0;
+            transform: translateY(5px);
         }
 
         .banner-hint {
@@ -94,17 +127,17 @@
             letter-spacing: 1px;
             border: 1px solid rgba(219, 225, 232, 0.1);
             color: #ffffff;
-            z-index: 3;
+            z-index: 4;
             pointer-events: none;
         }
 
         .content-body {
             position: relative;
-            z-index: 2;
+            z-index: 5;
             width: calc(100% - 40px);
-            margin: 240px auto 40px auto;
+            margin: 280px auto 40px auto;
             background-color: #151922;
-            padding: 80px 24px 45px 24px;
+            padding: 65px 24px 45px 24px;
             box-sizing: border-box;
             text-align: center;
             pointer-events: none;
@@ -114,13 +147,13 @@
         }
 
         .avatar-container {
-            width: 115px;
-            height: 115px;
+            width: 105px;
+            height: 105px;
             border-radius: 50%;
             background-color: #000000;
             position: absolute;
-            top: -57.5px;
-            left: calc(50% - 57.5px);
+            top: -52.5px;
+            left: calc(50% - 52.5px);
             border: 4px solid #151922;
             overflow: hidden;
             display: flex;
@@ -128,7 +161,7 @@
             align-items: center;
             box-shadow: 0 12px 35px rgba(0,0,0,0.5);
             pointer-events: auto;
-            z-index: 5;
+            z-index: 6;
         }
 
         .avatar-img {
@@ -266,9 +299,18 @@
     <div class="phone-wrapper">
         <div class="banner-container" onclick="openViewer()">
             <div class="banner-hint">View Render</div>
-            <!-- Double layer setup to prevent the background from dropping to black -->
+            
+            <!-- Shifting Background Image Layers -->
             <div class="banner-layer" id="bannerBack"></div>
             <div class="banner-layer" id="bannerFront"></div>
+            
+            <!-- Interactive Text Overlay Layer -->
+            <div class="banner-overlay">
+                <div class="headline-container">
+                    Find & Visualize Your <br>
+                    <span class="changing-text" id="dynamicPhrase">Perfect Renders</span>
+                </div>
+            </div>
         </div>
 
         <div class="content-body">
@@ -298,13 +340,11 @@
     </div>
 
     <script>
+        // --- PORTFOLIO IMAGES CORES ---
         const images = [
-            // 🏙️ Exteriors First
             '/static/images/Exterior.jpg',
             '/static/images/Exterior (2).jpg',
             '/static/images/Exterior_2.jpg',
-            
-            // 🛋️ Interiors Next
             '/static/images/Interior.jpg',
             '/static/images/Interior (2).jpg',
             '/static/images/Interior (3).jpg',
@@ -313,11 +353,21 @@
             '/static/images/Interior (6).jpg',
             '/static/images/Interior (7).jpg'
         ];
+
+        // --- DYNAMIC TEXT TEXTURES (Matching Portal Video style) ---
+        const phrases = [
+            "Perfect Renders",
+            "Spaces Securely & Comfortably",
+            "Designs Professionally"
+        ];
         
         let currentIndex = 0;
-        const changeInterval = 7000; 
+        let textIndex = 0;
+        const changeInterval = 6000; // Shifting intervals
+        
         const bannerFront = document.getElementById('bannerFront');
         const bannerBack = document.getElementById('bannerBack');
+        const dynamicPhrase = document.getElementById('dynamicPhrase');
 
         // Setup base layer properties
         if (bannerFront && bannerBack && images.length > 0) {
@@ -328,28 +378,29 @@
 
         function startSlideshow() {
             setInterval(() => {
+                // 1. ADVANCE BACKGROUND IMAGES
                 const nextIndex = (currentIndex + 1) % images.length;
-                
-                // Stage the upcoming image completely underneath the active overlay tracking layer
                 bannerBack.style.backgroundImage = `url('${images[nextIndex]}')`;
-                
-                // Slowly dissolve the overlay out to cleanly reveal the underlying background image
                 bannerFront.classList.add('fade-out');
 
-                // After the 1.5s visual animation completes, reset tracking properties behind-the-scenes
+                // 2. ADVANCE OVERLAY HEADLINE TEXT (Syncs smoothly midway)
+                if (dynamicPhrase) {
+                    dynamicPhrase.classList.add('text-flip');
+                    setTimeout(() => {
+                        textIndex = (textIndex + 1) % phrases.length;
+                        dynamicPhrase.textContent = phrases[textIndex];
+                        dynamicPhrase.classList.remove('text-flip');
+                    }, 400);
+                }
+
+                // Clean tracking variables right after transition completes
                 setTimeout(() => {
                     currentIndex = nextIndex;
-                    
-                    // Instantly sync the visual overlay background to the active track
                     bannerFront.style.backgroundImage = `url('${images[currentIndex]}')`;
-                    
-                    // Remove transition class to restore overlay opacity immediately without layout blinking
                     bannerFront.classList.remove('fade-out');
                     
-                    // Pre-render the upcoming sequence image on the back layer so it's fully ready
                     const upcomingIndex = (currentIndex + 1) % images.length;
                     bannerBack.style.backgroundImage = `url('${images[upcomingIndex]}')`;
-                    
                 }, 1500); 
 
             }, changeInterval);
