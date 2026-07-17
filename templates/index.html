@@ -49,7 +49,7 @@
             height: 100%;
             background-size: cover;
             background-position: center center; 
-            /* Slower 1.5s ease transition for a deeply premium fade feel */
+            /* Smooth 1.5s ease fade matching the cross-fade animation pacing */
             transition: opacity 1.5s ease-in-out; 
             opacity: 1;
         }
@@ -271,22 +271,25 @@
     </div>
 
     <script>
-        // --- CHOOSE YOUR IMAGE ORDER HERE ---
-        // Rearrange these filenames so your exteriors sit at the front of the list!
+        // --- PERFECTLY SEQUENCED PORTFOLIO ARRAY ---
         const images = [
-            '/static/images/1.jpg', // Exterior 1
-            '/static/images/2.jpg', // Exterior 2
-            '/static/images/3.jpg', // Exterior 3
-            '/static/images/4.jpg', // Exterior 4
-            '/static/images/5.jpg', // Exterior 5
-            '/static/images/6.jpg', // Interior 1
-            '/static/images/7.jpg', // Interior 2
-            '/static/images/8.jpg', // Interior 3
-            '/static/images/9.jpg'  // Interior 4
+            // 🏙️ EXTERIORS FIRST
+            '/static/images/Exterior.jpg',
+            '/static/images/Exterior (2).jpg',
+            '/static/images/Exterior_2.jpg',
+            
+            // 🛋️ INTERIORS NEXT
+            '/static/images/Interior.jpg',
+            '/static/images/Interior (2).jpg',
+            '/static/images/Interior (3).jpg',
+            '/static/images/Interior (4).jpg',
+            '/static/images/Interior (5).jpg',
+            '/static/images/Interior (6).jpg',
+            '/static/images/Interior (7).jpg'
         ];
         
         let currentIndex = 0;
-        const changeInterval = 8000; // Premium slow timing (8 seconds)
+        const changeInterval = 8000; // 8-second slow pacing showcase
         const banner = document.getElementById('slideshowBanner');
 
         if (banner) {
@@ -295,15 +298,15 @@
 
         function startSlideshow() {
             setInterval(() => {
-                // Smoothly fade out the current render
+                // Fade out smoothly
                 banner.style.opacity = 0;
 
-                // Swap images and fade back in smoothly right after opacity drops
+                // Core loop handler: updates tracks after full transition opacity drop
                 setTimeout(() => {
-                    currentIndex = (currentIndex + 1) % images.length; // Infinitely loops back to index 0
+                    currentIndex = (currentIndex + 1) % images.length; // Flawless infinite rotation loops
                     banner.style.backgroundImage = `url('${images[currentIndex]}')`;
                     banner.style.opacity = 1;
-                }, 1500); // Perfectly calibrated to the 1.5s CSS transition
+                }, 1500); 
 
             }, changeInterval);
         }
