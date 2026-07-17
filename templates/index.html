@@ -42,9 +42,10 @@
             left: 0;
             z-index: 1;
             cursor: pointer;
+            background-color: #11141a;
         }
 
-        /* Dual-layer setup for seamless image-to-image cross-fades */
+        /* Hardware-accelerated base setup for true seamless cross-fading */
         .banner-layer {
             position: absolute;
             top: 0;
@@ -53,21 +54,32 @@
             height: 100%;
             background-size: cover;
             background-position: center center;
+            will-change: opacity;
+            transform: translateZ(0);
         }
 
         #bannerBack {
             z-index: 1;
+            opacity: 1;
         }
 
         #bannerFront {
             z-index: 2;
-            /* Pure cross-fade transition directly between images */
-            transition: opacity 1.5s ease-in-out;
             opacity: 1;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        /* State applied dynamically during the cross-fade blend */
+        #bannerFront.fade-out {
+            opacity: 0;
         }
 
         .banner-container:hover #bannerFront {
             opacity: 0.95;
+        }
+        
+        .banner-container:hover #bannerFront.fade-out {
+            opacity: 0;
         }
 
         .banner-hint {
@@ -253,8 +265,8 @@
 
     <div class="phone-wrapper">
         <div class="banner-container" onclick="openViewer()">
-            
-            <!-- Two layers for direct cross-fading -->
+            <div class="banner-hint">View Render</div>
+            <!-- Double layer setup to prevent the background from dropping to black -->
             <div class="banner-layer" id="bannerBack"></div>
             <div class="banner-layer" id="bannerFront"></div>
         </div>
@@ -287,12 +299,12 @@
 
     <script>
         const images = [
-            // 🏙️ Exteriors
+            // 🏙️ Exteriors First
             '/static/images/Exterior.jpg',
             '/static/images/Exterior (2).jpg',
             '/static/images/Exterior_2.jpg',
             
-            // 🛋️ Interiors
+            // 🛋️ Interiors Next
             '/static/images/Interior.jpg',
             '/static/images/Interior (2).jpg',
             '/static/images/Interior (3).jpg',
@@ -303,12 +315,12 @@
         ];
         
         let currentIndex = 0;
-        const changeInterval = 8000; 
+        const changeInterval = 7000; 
         const bannerFront = document.getElementById('bannerFront');
         const bannerBack = document.getElementById('bannerBack');
 
-        // Initialize first view
-        if (bannerFront && bannerBack) {
+        // Setup base layer properties
+        if (bannerFront && bannerBack && images.length > 0) {
             bannerFront.style.backgroundImage = `url('${images[currentIndex]}')`;
             const nextIndex = (currentIndex + 1) % images.length;
             bannerBack.style.backgroundImage = `url('${images[nextIndex]}')`;
@@ -316,27 +328,28 @@
 
         function startSlideshow() {
             setInterval(() => {
-                // Determine the upcoming render
                 const nextIndex = (currentIndex + 1) % images.length;
                 
-                // Stage the upcoming image seamlessly underneath the active front image
+                // Stage the upcoming image completely underneath the active overlay tracking layer
                 bannerBack.style.backgroundImage = `url('${images[nextIndex]}')`;
                 
-                // Fade out the front image, seamlessly dissolving directly into the back image
-                bannerFront.style.opacity = 0;
+                // Slowly dissolve the overlay out to cleanly reveal the underlying background image
+                bannerFront.classList.add('fade-out');
 
+                // After the 1.5s visual animation completes, reset tracking properties behind-the-scenes
                 setTimeout(() => {
-                    // Update index counters after the 1.5s cross-fade completes
                     currentIndex = nextIndex;
                     
-                    // Instantly snap front image to the new current background and reset its opacity
-                    bannerFront.style.transition = 'none';
+                    // Instantly sync the visual overlay background to the active track
                     bannerFront.style.backgroundImage = `url('${images[currentIndex]}')`;
-                    bannerFront.style.opacity = 1;
                     
-                    // Force a quick layout reflow before restoring the transition property
-                    bannerFront.offsetHeight; 
-                    bannerFront.style.transition = 'opacity 1.5s ease-in-out';
+                    // Remove transition class to restore overlay opacity immediately without layout blinking
+                    bannerFront.classList.remove('fade-out');
+                    
+                    // Pre-render the upcoming sequence image on the back layer so it's fully ready
+                    const upcomingIndex = (currentIndex + 1) % images.length;
+                    bannerBack.style.backgroundImage = `url('${images[upcomingIndex]}')`;
+                    
                 }, 1500); 
 
             }, changeInterval);
@@ -350,13 +363,15 @@
         function openViewer() {
             const modal = document.getElementById('imageViewer');
             const modalImg = document.getElementById('modalImg');
-            
-            modalImg.src = images[currentIndex];
-            modal.classList.add('modal-active');
+            if(modal && modalImg) {
+                modalImg.src = images[currentIndex];
+                modal.classList.add('modal-active');
+            }
         }
 
         function closeViewer() {
-            document.getElementById('imageViewer').classList.remove('modal-active');
+            const modal = document.getElementById('imageViewer');
+            if(modal) modal.classList.remove('modal-active');
         }
 
         function closeViewerOnOverlay(event) {
