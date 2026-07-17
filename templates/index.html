@@ -42,11 +42,11 @@
             left: 0;
             z-index: 1;
             cursor: pointer;
-            background-color: #11141a;
+            /* REMOVED dark background color to prevent flashes */
             overflow: hidden;
         }
 
-        /* Twin layer setup for seamless heavy rendering image swaps */
+        /* Triple layer stacking strategy */
         .banner-layer {
             position: absolute;
             top: 0;
@@ -57,17 +57,31 @@
             background-position: center center;
             will-change: opacity, transform;
             opacity: 0;
-            z-index: 1;
-            /* 2-second cross-dissolve with an ultra-smooth 9-second scaling sweep */
-            transition: opacity 2000ms ease-in-out, transform 9000ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: opacity 2000ms ease-in-out, transform 9000ms linear;
             transform: scale(1);
         }
 
-        /* Applied exclusively to the visible rendering actively playing out */
+        /* Base floor layer - always opaque, no zoom, acts as a safety blanket */
+        #layerBase {
+            z-index: 1;
+            opacity: 1;
+            transition: none;
+        }
+
+        /* Transition layer 1 */
+        #layer1 {
+            z-index: 2;
+        }
+
+        /* Transition layer 2 */
+        #layer2 {
+            z-index: 3;
+        }
+
+        /* Active animation styling */
         .banner-layer.active {
             opacity: 1;
-            z-index: 2;
-            transform: scale(1.06);
+            transform: scale(1.08);
         }
 
         .banner-hint {
@@ -255,7 +269,8 @@
         <div class="banner-container" onclick="openViewer()">
             <div class="banner-hint">View Render</div>
             
-            <!-- Dedicated staging tracks -->
+            <!-- Three structural layers to ensure an absolute zero-dark-slide execution -->
+            <div class="banner-layer" id="layerBase"></div>
             <div class="banner-layer active" id="layer1"></div>
             <div class="banner-layer" id="layer2"></div>
         </div>
@@ -300,8 +315,7 @@
             '/static/images/Interior (7).jpg'
         ];
         
-        // --- 1. PROACTIVE IMAGE PRELOADER ENGINE ---
-        // Forcing browser to build local asset memory references immediately
+        // Dynamic Caching engine
         const cachedImages = [];
         function preloadPortfolioAssets() {
             for (let i = 0; i < images.length; i++) {
@@ -312,41 +326,48 @@
         preloadPortfolioAssets();
 
         let currentIndex = 0;
-        const displayDuration = 5500; // Complete static window visibility length before transition trigger
+        const displayDuration = 5500;
         
+        const layerBase = document.getElementById('layerBase');
         const layers = [
             document.getElementById('layer1'),
             document.getElementById('layer2')
         ];
         let activeLayerIndex = 0;
 
-        // Apply first background image immediately
-        if (layers[0] && layers[1] && images.length > 0) {
+        // Populate base layers on start
+        if (layers[0] && layers[1] && layerBase && images.length > 0) {
             layers[0].style.backgroundImage = `url('${images[currentIndex]}')`;
+            layerBase.style.backgroundImage = `url('${images[(currentIndex + 1) % images.length]}')`;
         }
 
         function swapSlideshowLayers() {
             const nextIndex = (currentIndex + 1) % images.length;
-            const currentLayer = layers[activeLayerIndex];
+            const upcomingIndex = (nextIndex + 1) % images.length;
             
-            // Toggle layer indexing paths
+            const currentLayer = layers[activeLayerIndex];
             activeLayerIndex = (activeLayerIndex + 1) % 2;
             const nextLayer = layers[activeLayerIndex];
 
-            // A. Prepare incoming image track cleanly at baseline values
+            // 1. Stage the next image layout at baseline size with no transition physics active
             nextLayer.style.transition = 'none';
             nextLayer.style.transform = 'scale(1)';
             nextLayer.style.backgroundImage = `url('${images[nextIndex]}')`;
             
-            // Force hardware execution layout refresh
+            // Force layout sync engine
             nextLayer.offsetHeight;
 
-            // B. Restore smooth transition physics instantly
-            nextLayer.style.transition = 'opacity 2000ms ease-in-out, transform 9000ms cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            // 2. Turn on physics classes
+            nextLayer.style.transition = 'opacity 2000ms ease-in-out, transform 9000ms linear';
             
-            // C. Cross-dissolve: bring new up, fade old down
+            // 3. Bring the hidden layer up while removing visibility on the outgoing layer
             nextLayer.classList.add('active');
             currentLayer.classList.remove('active');
+
+            // 4. Update the absolute fallback base background layer safely behind the transitions
+            setTimeout(() => {
+                layerBase.style.backgroundImage = `url('${images[upcomingIndex]}')`;
+            }, 2000);
 
             currentIndex = nextIndex;
         }
