@@ -43,10 +43,10 @@
             z-index: 1;
             cursor: pointer;
             background-color: #11141a;
-            overflow: hidden; /* Keeps the zoom contained */
+            overflow: hidden;
         }
 
-        /* Base setup for smooth image scale and dissolve layer tracking */
+        /* Two identical layers that seamlessly alternate roles */
         .banner-layer {
             position: absolute;
             top: 0;
@@ -55,32 +55,19 @@
             height: 100%;
             background-size: cover;
             background-position: center center;
-            will-change: transform, opacity;
-        }
-
-        #bannerBack {
-            z-index: 1;
-            opacity: 1;
-            /* Continuously zooms the underlying staged image slightly */
-            transform: scale(1.08);
-            transition: transform 7000ms linear;
-        }
-
-        #bannerFront {
-            z-index: 2;
-            opacity: 1;
-            transform: scale(1);
-            /* Double transition handling both the fade dissolve and slow scale zoom */
-            transition: opacity 1500ms ease-in-out, transform 7000ms linear;
-        }
-
-        /* Combined fade and slight zoom increase exactly like ElifRent portal style */
-        #bannerFront.zoomed {
-            transform: scale(1.08);
-        }
-
-        #bannerFront.fade-out {
+            will-change: opacity, transform;
             opacity: 0;
+            z-index: 1;
+            /* Extra long, continuous zoom time for ultimate cinematic smoothness */
+            transition: opacity 2000ms ease-in-out, transform 9000ms linear;
+            transform: scale(1);
+        }
+
+        /* The layer currently visible to the user */
+        .banner-layer.active {
+            opacity: 1;
+            z-index: 2;
+            transform: scale(1.08);
         }
 
         .banner-hint {
@@ -268,8 +255,9 @@
         <div class="banner-container" onclick="openViewer()">
             <div class="banner-hint">View Render</div>
             
-            <div class="banner-layer" id="bannerBack"></div>
-            <div class="banner-layer" id="bannerFront"></div>
+            <!-- Two active layered slots for zero-latency crossfade -->
+            <div class="banner-layer active" id="layer1"></div>
+            <div class="banner-layer" id="layer2"></div>
         </div>
 
         <div class="content-body">
@@ -313,59 +301,50 @@
         ];
         
         let currentIndex = 0;
-        const changeInterval = 6500; // Total window per image zoom rotation loop
+        const displayDuration = 6000; // Time before transition starts
         
-        const bannerFront = document.getElementById('bannerFront');
-        const bannerBack = document.getElementById('bannerBack');
+        const layers = [
+            document.getElementById('layer1'),
+            document.getElementById('layer2')
+        ];
+        let activeLayerIndex = 0;
 
-        // Setup base layer properties
-        if (bannerFront && bannerBack && images.length > 0) {
-            bannerFront.style.backgroundImage = `url('${images[currentIndex]}')`;
-            const nextIndex = (currentIndex + 1) % images.length;
-            bannerBack.style.backgroundImage = `url('${images[nextIndex]}')`;
-            
-            // Kick off the initial slow zoom
-            setTimeout(() => {
-                bannerFront.classList.add('zoomed');
-            }, 50);
+        // Setup the initial starting layout
+        if (layers[0] && layers[1] && images.length > 0) {
+            layers[0].style.backgroundImage = `url('${images[currentIndex]}')`;
         }
 
-        function startSlideshow() {
-            setInterval(() => {
-                const nextIndex = (currentIndex + 1) % images.length;
-                
-                // 1. Stage the upcoming image completely underneath
-                bannerBack.style.backgroundImage = `url('${images[nextIndex]}')`;
-                
-                // 2. Dissolve the zooming front image to reveal the waiting back image
-                bannerFront.classList.add('fade-out');
+        function swapSlideshowLayers() {
+            // Calculate next index configuration
+            const nextIndex = (currentIndex + 1) % images.length;
+            const currentLayer = layers[activeLayerIndex];
+            
+            // Switch target layout pointers
+            activeLayerIndex = (activeLayerIndex + 1) % 2;
+            const nextLayer = layers[activeLayerIndex];
 
-                // 3. Reset the track loops cleanly right as soon as the fade finishes
-                setTimeout(() => {
-                    currentIndex = nextIndex;
-                    
-                    // Instantly snap front back to normal scale, update image, and drop fade-out
-                    bannerFront.style.transition = 'none';
-                    bannerFront.classList.remove('zoomed', 'fade-out');
-                    bannerFront.style.backgroundImage = `url('${images[currentIndex]}')`;
-                    
-                    // Force a quick layout reflow before restoring transitions
-                    bannerFront.offsetHeight; 
-                    bannerFront.style.transition = 'opacity 1500ms ease-in-out, transform 7000ms linear';
-                    
-                    // Start the next slow zoom cycle immediately
-                    bannerFront.classList.add('zoomed');
+            // 1. Prepare upcoming image in background at baseline scale (no transitions active)
+            nextLayer.style.transition = 'none';
+            nextLayer.style.transform = 'scale(1)';
+            nextLayer.style.backgroundImage = `url('${images[nextIndex]}')`;
+            
+            // Force browser layout update so transitions don't latch onto the reset state
+            nextLayer.offsetHeight;
 
-                    // Pre-render the upcoming sequence image on the back layer so it's ready
-                    const upcomingIndex = (currentIndex + 1) % images.length;
-                    bannerBack.style.backgroundImage = `url('${images[upcomingIndex]}')`;
-                }, 1500); 
+            // 2. Reactivate transition properties smoothly
+            nextLayer.style.transition = 'opacity 2000ms ease-in-out, transform 9000ms linear';
+            
+            // 3. Make the hidden layer step into active zooming territory
+            nextLayer.classList.add('active');
+            
+            // 4. Remove active status from previous overlay so it dissolves away beautifully
+            currentLayer.classList.remove('active');
 
-            }, changeInterval);
+            currentIndex = nextIndex;
         }
 
         if (images.length > 1) {
-            startSlideshow();
+            setInterval(swapSlideshowLayers, displayDuration);
         }
 
         // --- LIGHTBOX CONTROLS ---
