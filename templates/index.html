@@ -56,8 +56,8 @@
             background-position: center center;
             will-change: opacity;
             opacity: 0;
-            /* MODIFIED: Removed transform physics to focus solely on a clean fade dissolve */
-            transition: opacity 400ms ease-in-out;
+            /* MODIFIED: Slowed down crossfade to 800ms for a smoother look */
+            transition: opacity 800ms ease-in-out;
         }
 
         /* Base floor layer - always opaque, acts as a safety blanket */
@@ -321,8 +321,8 @@
         preloadPortfolioAssets();
 
         let currentIndex = 0;
-        // High speed image viewing loop interval window (2.2 seconds)
-        const displayDuration = 2200;
+        // MODIFIED: Slightly slowed loop interval (3.5 seconds)
+        const displayDuration = 3500;
         
         const layerBase = document.getElementById('layerBase');
         const layers = [
@@ -352,17 +352,17 @@
             // Force layout sync engine
             nextLayer.offsetHeight;
 
-            // 2. MODIFIED: Dynamic high speed pure dissolve physics parameters applied (400ms crossfade only)
-            nextLayer.style.transition = 'opacity 400ms ease-in-out';
+            // 2. MODIFIED: Dynamic smooth pure dissolve physics applied (800ms crossfade)
+            nextLayer.style.transition = 'opacity 800ms ease-in-out';
             
             // 3. Bring the hidden layer up while removing visibility on the outgoing layer
             nextLayer.classList.add('active');
             currentLayer.classList.remove('active');
 
-            // 4. Prime fallback tracking window exactly behind the active crossfade timeframe (400ms)
+            // 4. MODIFIED: Updated fallback tracking window to match the new 800ms fade timeframe
             setTimeout(() => {
                 layerBase.style.backgroundImage = `url('${images[upcomingIndex]}')`;
-            }, 400);
+            }, 800);
 
             currentIndex = nextIndex;
         }
